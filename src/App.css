@@ -1,0 +1,36 @@
+body {
+  background: #f5f6fa;
+}
+
+h2 {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+button {
+  background: #0070f3;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+button:not(:disabled):hover {
+  background: #005bb5;
+}
+
+strong {
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+/* Remove default logo and header styles */
+.App-logo,
+.App-header,
+.App-link {
+  display: none !important;
+}
