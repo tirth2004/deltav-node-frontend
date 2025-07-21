@@ -68,8 +68,8 @@ function App() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ text: transcript }),
       });
-      const data = await res.json();
-      setResponse(data.result || "No result in response.");
+      const data = await res.text();
+      setResponse(data || "No result in response.");
     } catch (e) {
       setResponse("Error: " + e.message);
     }
