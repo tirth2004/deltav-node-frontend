@@ -197,7 +197,7 @@ function App() {
           disabled={!file || fileLoading}
           style={{ padding: "0.5rem 1rem", fontSize: "1rem", marginLeft: 8 }}
         >
-          {fileLoading ? "Processing..." : "Upload & Transcribe"}
+          {fileLoading ? "Processing..." : "Generate feedback"}
         </button>
         {fileResponse && (
           <div style={{ marginTop: 16 }}>
