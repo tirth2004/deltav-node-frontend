@@ -3,12 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@google-cloud/speech": "^7.2.0",
-    "cors": "^2.8.5",
     "cra-template-pwa": "2.0.0",
-    "express": "^5.1.0",
-    "git-filter-repo": "^0.0.30",
-    "multer": "^2.0.2",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-markdown": "^10.1.0",
