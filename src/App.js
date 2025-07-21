@@ -1,26 +1,24 @@
-
 import React, { useState, useRef } from "react";
 import ReactMarkdown from "react-markdown";
 import "./App.css";
 
 const API_URL = "https://proxy-179385229806.europe-southwest1.run.app/generate";
-const TRANSCRIBE_URL = "http://localhost:5001/transcribe";
 
 function App() {
   const [recording, setRecording] = useState(false);
   const [transcript, setTranscript] = useState("");
   const [response, setResponse] = useState("");
-  const [selectedFile, setSelectedFile] = useState(null);
-
   const recognitionRef = useRef(null);
-  const recordingRef = useRef(false);
 
   const startRecording = () => {
-    if (!("webkitSpeechRecognition" in window || "SpeechRecognition" in window)) {
+    if (
+      !("webkitSpeechRecognition" in window || "SpeechRecognition" in window)
+    ) {
       alert("Speech recognition not supported in this browser.");
       return;
     }
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const SpeechRecognition =
+      window.SpeechRecognition || window.webkitSpeechRecognition;
     const recognition = new SpeechRecognition();
     recognition.lang = "en-US";
     recognition.interimResults = false;
@@ -34,6 +32,7 @@ function App() {
       alert("Speech recognition error: " + event.error);
     };
     recognition.onend = () => {
+      // If still recording, restart recognition to simulate longer silence timeout
       if (recordingRef.current) {
         recognition.start();
       } else {
@@ -48,6 +47,9 @@ function App() {
     setTranscript("");
     setResponse("");
   };
+
+  // Add a ref to track if we should keep recording
+  const recordingRef = useRef(false);
 
   const stopRecording = () => {
     recordingRef.current = false;
@@ -73,62 +75,17 @@ function App() {
     }
   };
 
-  const handleFileUpload = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    setResponse("Transcribing audio file...");
-    setTranscript("");
-    const formData = new FormData();
-    formData.append("audio", file);
-
-    try {
-      const res = await fetch(TRANSCRIBE_URL, {
-        method: "POST",
-        body: formData,
-      });
-      const data = await res.json();
-      if (data.transcript) {
-        console.log("Transcript:", data.transcript);
-        setTranscript(data.transcript);
-        setResponse("Transcript generated. Sending to model...");
-
-        const mlRes = await fetch(API_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ text: data.transcript }),
-        });
-        const mlData = await mlRes.json();
-        setResponse(mlData.result || "No result in response.");
-      } else {
-        setResponse("No transcript returned.");
-      }
-    } catch (err) {
-      setResponse("Error during transcription: " + err.message);
-    }
-  };
-
   return (
-    <div style={{ maxWidth: 600, margin: "2rem auto", fontFamily: "sans-serif" }}>
+    <div
+      style={{ maxWidth: 600, margin: "2rem auto", fontFamily: "sans-serif" }}
+    >
       <h2>DeltaV Pitch AI</h2>
-
       <button
         onClick={recording ? stopRecording : startRecording}
         style={{ padding: "0.5rem 1rem", fontSize: "1rem" }}
       >
         {recording ? "Stop Recording" : "Start Recording"}
       </button>
-
-      <div style={{ margin: "1rem 0" }}>
-        <strong>Upload Audio File:</strong>
-        <input
-          type="file"
-          accept="audio/*"
-          onChange={handleFileUpload}
-          style={{ marginTop: 8 }}
-        />
-      </div>
-
       <div style={{ margin: "1rem 0" }}>
         <strong>Transcript:</strong>
         <textarea
@@ -146,7 +103,6 @@ function App() {
           placeholder="Your transcript will appear here. You can edit it before submitting."
         />
       </div>
-
       <button
         onClick={sendToApi}
         disabled={!transcript || recording}
@@ -154,7 +110,6 @@ function App() {
       >
         Get Feedback
       </button>
-
       <div style={{ marginTop: 24 }}>
         <strong>Response:</strong>
         <div
@@ -174,4 +129,3 @@ function App() {
 }
 
 export default App;
-
