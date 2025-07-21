@@ -19,6 +19,8 @@ function App() {
   const [recordingResponse, setRecordingResponse] = useState("");
   const [fileResponse, setFileResponse] = useState("");
 
+  const isRecordingSupported = !!window.MediaRecorder;
+
   // Start recording audio using MediaRecorder
   const startRecording = async () => {
     setRecordingResponse("");
@@ -145,14 +147,21 @@ function App() {
     >
       <h2>DeltaV Pitch AI</h2>
       <div>
-        <h3>Record Audio & Transcribe</h3>
-        <button
-          onClick={recording ? stopRecording : startRecording}
-          style={{ padding: "0.5rem 1rem", fontSize: "1rem" }}
-          disabled={recordingLoading}
-        >
-          {recording ? "Stop Recording" : "Start Recording"}
-        </button>
+        <h3>Record audio</h3>
+        {isRecordingSupported ? (
+          <button
+            onClick={recording ? stopRecording : startRecording}
+            style={{ padding: "0.5rem 1rem", fontSize: "1rem" }}
+            disabled={recordingLoading}
+          >
+            {recording ? "Stop Recording" : "Start Recording"}
+          </button>
+        ) : (
+          <div>
+            Recording is not supported on your device/browser. Please use the
+            file upload option.
+          </div>
+        )}
         {recordingLoading && (
           <span style={{ marginLeft: 12 }}>Processing...</span>
         )}
@@ -176,7 +185,7 @@ function App() {
       <div
         style={{ marginTop: 40, paddingTop: 24, borderTop: "1px solid #eee" }}
       >
-        <h3>Transcribe MP3 File</h3>
+        <h3>Upload MP3 file</h3>
         <input
           type="file"
           accept="audio/mp3,audio/webm,audio/ogg"
